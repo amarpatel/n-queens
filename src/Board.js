@@ -174,17 +174,47 @@
     },
 
 
-
     // Minor Diagonals - go from top-right to bottom-left
     // --------------------------------------------------------------
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(x,y) {
-      return false; // fixme
+      var n = this.attributes.n;
+      var counter = 0;
+      y = y || n-1;
+
+      for (var i=0; i<n; i++) {
+        counter += this.attributes[y][x];
+        if (counter > 1) {
+          return true;
+        }
+        x++;
+        y--;
+        if (!this.attributes[y][x]) {
+          return false;
+        }
+      }
+
+      return false;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
+      var n = this.attributes.n;
+      var i;
+
+      for (i=0;i<n;i++) {
+        if (this.hasMinorDiagonalConflictAt(i, n-1)) {
+          return true;
+        }
+      }
+
+      for (i=1; i<n; i++) {
+        if (this.hasMinorDiagonalConflictAt(0,i)) {
+          return true;
+        }
+      }
+
       return false; // fixme
     }
 
