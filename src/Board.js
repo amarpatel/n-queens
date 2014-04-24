@@ -139,6 +139,10 @@
 
     hasMajorDiagonalConflictAt: function(x,y) {
       y = y || 0;
+      // while(x !== 0 && y !== 0){
+      //   x--;
+      //   y--;
+      // }
       var n = this.attributes.n;
       var counter = 0;
       for (var i=0;i<n;i++) {
@@ -148,7 +152,7 @@
         }
         y++;
         x++;
-        if (!this.attributes[y][x]) {
+        if (x === n || y === n) {
           return false;
         }
       }
@@ -181,7 +185,14 @@
     hasMinorDiagonalConflictAt: function(x,y) {
       var n = this.attributes.n;
       var counter = 0;
-      y = y || n-1;
+      if (y === undefined) {
+        y = n -1;
+      }
+
+      // while(x !== 0 && y !== n-1){
+      //   y++;
+      //   x--;
+      // }
 
       for (var i=0; i<n; i++) {
         counter += this.attributes[y][x];
@@ -190,7 +201,7 @@
         }
         x++;
         y--;
-        if (!this.attributes[y][x]) {
+        if (x > n-1 || y < 0) {
           return false;
         }
       }
@@ -202,7 +213,6 @@
     hasAnyMinorDiagonalConflicts: function() {
       var n = this.attributes.n;
       var i;
-
       for (i=0;i<n;i++) {
         if (this.hasMinorDiagonalConflictAt(i, n-1)) {
           return true;
