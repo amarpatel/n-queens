@@ -105,18 +105,118 @@ window.countNRooksSolutions = function(n) {
 
 };
 
+//OLD
+// window.addOnePieceQueens = function(board) {
+//   var results = [];
+//   var matrix = board.attributes;
+//   var n = matrix.n;
+//   var i, j;
 
+//   var boardSlice = function (board) {
+//     var temp = [];
+//     for (var i=0; i<n; i++) {
+//       temp.push(board.attributes[i].slice());
+//     }
+//     var newBoard = new Board(temp);
+//     return newBoard;
+//   };
+
+//   //i === rows
+//   for (i=0;i<n;i++) {
+//     //j === columns
+//     for (j=0;j<n;j++) {
+//       if (matrix[i][j] === 1) {
+//         continue;
+//       } else {
+//         matrix[i][j] = 1;
+//         if (!board.hasRowConflictAt(i) && !board.hasColConflictAt(j) && !board.hasAnyMinorDiagonalConflicts() && !board.hasAnyMajorDiagonalConflicts()) {
+//           results.push(boardSlice(board));
+//         }
+//         matrix[i][j] = 0;
+//       }
+//     }
+//   }
+
+//   return results;
+// };
+
+//NEW - RIPPLE
 window.addOnePieceQueens = function(board) {
   var results = [];
   var matrix = board.attributes;
   var n = matrix.n;
   var i, j;
 
-  var boardSlice = function (board) {
+  var ripple = function (matrix, x, y) {
+    var x2 = x;
+    var y2 = y;
+    var n = matrix.length;
+
+    //up
+    while (y2 >= 0) {
+      matrix[y2][x2] = 1;
+      y2--;
+    }
+    y2 = y;
+    //down
+    while (y2 < n) {
+      matrix[y2][x2] = 1;
+      y2++;
+    }
+    y2 = y;
+    //left
+    while (x2 >= 0) {
+      matrix[y2][x2] = 1;
+      x2--;
+    }
+    x2 = x;
+    //right
+    while (x2 < n) {
+      matrix[y2][x2] = 1;
+      x2++;
+    }
+    x2 = x;
+    //NW
+    while (x2 >= 0 && y2 >= 0) {
+      matrix[y2][x2] = 1;
+      x2--;
+      y2--;
+    }
+    x2 = x;
+    y2 = y;
+    //NE
+    while (x2 < n && y2 >= 0) {
+      matrix[y2][x2] = 1;
+      x2++;
+      y2--;
+    }
+    x2 = x;
+    y2 = y;
+    //SW
+    while (x2 >= 0 && y2 < n) {
+      matrix[y2][x2] = 1;
+      x2--;
+      y2++;
+    }
+    x2 = x;
+    y2 = y;
+    //SE
+    while (x2 < n && y2 < n) {
+      matrix[y2][x2] = 1;
+      x2++;
+      y2++;
+    }
+    matrix[y][x] = 2;
+
+    return matrix;
+  };
+
+  var boardSlice = function (board,x,y) {
     var temp = [];
     for (var i=0; i<n; i++) {
       temp.push(board.attributes[i].slice());
     }
+    temp = ripple(temp, x, y);
     var newBoard = new Board(temp);
     return newBoard;
   };
@@ -125,13 +225,10 @@ window.addOnePieceQueens = function(board) {
   for (i=0;i<n;i++) {
     //j === columns
     for (j=0;j<n;j++) {
-      if (matrix[i][j] === 1) {
+      if (matrix[i][j] === 1 || matrix[i][j] === 2) {
         continue;
       } else {
-        matrix[i][j] = 1;
-        if (!board.hasRowConflictAt(i) && !board.hasColConflictAt(j) && !board.hasAnyMinorDiagonalConflicts() && !board.hasAnyMajorDiagonalConflicts()) {
-          results.push(boardSlice(board));
-        }
+        results.push(boardSlice(board,j,i));
         matrix[i][j] = 0;
       }
     }
